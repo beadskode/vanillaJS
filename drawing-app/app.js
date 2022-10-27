@@ -1,6 +1,7 @@
 const modeBtn = document.getElementById("mode-btn");
 const eraseBtn = document.getElementById("erase-btn");
 const destroyBtn = document.getElementById("destroy-btn");
+const saveBtn = document.getElementById("save-btn");
 const fileInput = document.getElementById("file");
 const textInput = document.getElementById("text");
 const colorOptions = Array.from(
@@ -173,6 +174,14 @@ const onEraseClick = (e) => {
     ctx.strokeStyle = "#FFF";
 }
 
+const onSaveClick = (e) => {
+    const url = canvas.toDataURL();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "myDrowing.png";
+    a.click();
+}
+
 const onChange = (e) => {
     const file = e.target.files[0];
     const url = URL.createObjectURL(file);
@@ -216,4 +225,5 @@ colorOptions.forEach((i)=>{
 modeBtn.addEventListener('click', onModeClick);
 eraseBtn.addEventListener('click', onEraseClick);
 destroyBtn.addEventListener('click', onDestroyClick);
-fileInput.addEventListener('change', onChange)
+saveBtn.addEventListener('click', onSaveClick);
+fileInput.addEventListener('change', onChange);
