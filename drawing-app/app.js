@@ -2,6 +2,7 @@ const modeBtn = document.getElementById("mode-btn");
 const eraseBtn = document.getElementById("erase-btn");
 const destroyBtn = document.getElementById("destroy-btn");
 const fileInput = document.getElementById("file");
+const textInput = document.getElementById("text");
 const colorOptions = Array.from(
     document.getElementsByClassName("color-option")
 );
@@ -15,7 +16,10 @@ const CANVAS_HEIGHT = 800;
 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
+ctx.lineCap = "round";
 
+let isPainting = false;
+let isFilling = false;
 
 // canvas (0, 0) == right top
 
@@ -106,8 +110,6 @@ canvas.height = CANVAS_HEIGHT;
 // canvas.addEventListener('mousemove', onClick);
 
 
-let isPainting = false;
-let isFilling = false;
 
 const onMouseMove = (e) => {
     if (isPainting) {
@@ -181,11 +183,23 @@ const onChange = (e) => {
         fileInput.value = null;
     }
 }
- 
+
+const onDoubleClick = (e) => {
+    if (text !== '') {
+        ctx.save(); // ctx 의 현재 상태 저장
+        const text = textInput.value;
+        ctx.lineWidth = 1;
+        ctx.font = "48px serif"
+        ctx.fillText(text, e.offsetX, e.offsetY);
+        ctx.restore(); // ctx의 이전 상태 복원
+    }
+}
+
 const onMouseDragStart = (e) => {};
 const onMouseDragEnd = (e) => {};
 
 // canvas.onmousemove = function () {} // 같은 이벤트 안에 여러가지 이벤트를 넣을 수 없음
+canvas.addEventListener('dblclick', onDoubleClick);
 canvas.addEventListener('mousemove', onMouseMove);
 canvas.addEventListener('mousedown', startPainting); // click == down and up
 canvas.addEventListener('mouseup', cancelPainting);
