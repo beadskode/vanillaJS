@@ -1,6 +1,7 @@
 const modeBtn = document.getElementById("mode-btn");
 const eraseBtn = document.getElementById("erase-btn");
 const destroyBtn = document.getElementById("destroy-btn");
+const fileInput = document.getElementById("file");
 const colorOptions = Array.from(
     document.getElementsByClassName("color-option")
 );
@@ -170,9 +171,21 @@ const onEraseClick = (e) => {
     ctx.strokeStyle = "#FFF";
 }
 
+const onChange = (e) => {
+    const file = e.target.files[0];
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.src = url;
+    image.onload = function() {
+        ctx.drawImage(image, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT) // Canvas.drawImage(imageURL, x, y, width, height)
+        fileInput.value = null;
+    }
+}
+ 
 const onMouseDragStart = (e) => {};
 const onMouseDragEnd = (e) => {};
 
+// canvas.onmousemove = function () {} // 같은 이벤트 안에 여러가지 이벤트를 넣을 수 없음
 canvas.addEventListener('mousemove', onMouseMove);
 canvas.addEventListener('mousedown', startPainting); // click == down and up
 canvas.addEventListener('mouseup', cancelPainting);
@@ -189,3 +202,4 @@ colorOptions.forEach((i)=>{
 modeBtn.addEventListener('click', onModeClick);
 eraseBtn.addEventListener('click', onEraseClick);
 destroyBtn.addEventListener('click', onDestroyClick);
+fileInput.addEventListener('change', onChange)
