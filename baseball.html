@@ -28,19 +28,24 @@
                     <input type="number" class="form-control" id="inputNumber" maxlength="4">
                 </div>
                 <div class="container-number">
-                    <button type="button" class="btn btn-light" data-number="7">7</button>
-                    <button type="button" class="btn btn-light" data-number="8">8</button>
-                    <button type="button" class="btn btn-light" data-number="9">9</button>
-                    <button type="button" class="btn btn-light" data-number="4">4</button>
-                    <button type="button" class="btn btn-light" data-number="5">5</button>
-                    <button type="button" class="btn btn-light" data-number="6">6</button>
-                    <button type="button" class="btn btn-light" data-number="1">1</button>
-                    <button type="button" class="btn btn-light" data-number="2">2</button>
-                    <button type="button" class="btn btn-light" data-number="3">3</button>
-                    <button type="button" class="btn btn-light" data-number="delete"><i class="fa-solid fa-delete-left"></i></button>
-                    <button type="button" class="btn btn-light" data-number="0">0</button>
-                    <button type="button" class="btn btn-light" data-number="enter"><i class="fa-solid fa-check"></i></button>
+                    <button type="button" class="btn btn-light keypad" data-key="7">7</button>
+                    <button type="button" class="btn btn-light keypad" data-key="8">8</button>
+                    <button type="button" class="btn btn-light keypad" data-key="9">9</button>
+                    <button type="button" class="btn btn-light keypad" data-key="4">4</button>
+                    <button type="button" class="btn btn-light keypad" data-key="5">5</button>
+                    <button type="button" class="btn btn-light keypad" data-key="6">6</button>
+                    <button type="button" class="btn btn-light keypad" data-key="1">1</button>
+                    <button type="button" class="btn btn-light keypad" data-key="2">2</button>
+                    <button type="button" class="btn btn-light keypad" data-key="3">3</button>
+                    <button type="button" class="btn btn-light keypad" data-key="Backspace"><i class="fa-solid fa-delete-left"></i></button>
+                    <button type="button" class="btn btn-light keypad" data-key="0">0</button>
+                    <button type="button" class="btn btn-light keypad" data-key="Enter"><i class="fa-solid fa-check"></i></button>
                 </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div id="resultContainer">
+
             </div>
         </div>
     </div>
@@ -52,7 +57,9 @@
             constructor() {
                 this.count = 0;
                 this.number = this.setNumber();
-            }
+            };
+            userInput = [];
+            middleResult = [];
             setNumber() {
                 const number = {
                     arr: [],
@@ -71,17 +78,103 @@
                     number.roop += 1;
                 }
                 return number.arr;
+            };
+            isSame() {
+                const result = this.userInput.map((i, idx)=>{
+                    if (i === this.number[idx]) {
+                        return 'O'
+                    } else if (i !== this.number[idx] && this.number.includes(i)) {
+                        return '!'
+                    } else {
+                        return 'X'
+                    }
+                });
+                this.middleResult = result;
+                console.log(result)
+            };
+            getGameNumber() {
+                return this.number.join('');
+            };
+            getUserNumber() {
+                return this.userInput.join('');
+            };
+            getMiddleResult() {
+                return this.middleResult.join('');
+            };
+            isGameEnd() {
+                return this.number.join('') === this.userInput.join('');
+            };
+            startNewGame() {
+                this.count = 0;
+                this.number = this.setNumber();
+                this.userInput = [];
+                this.middleResult = [];
             }
         }
         
         const ground = new Ground();
+        const input = document.getElementById('inputNumber');
+        const result = document.getElementById('resultContainer');
+        const keypad = document.getElementsByClassName('keypad');
+        
         console.log(ground.number)
 
-        const test = document.querySelector('[data-number="enter"]');
-        test.addEventListener('click', (e)=>{
-            const input = document.getElementById('inputNumber');
-            console.log(input.value)
+
+        //* 사용자 숫자 입력 *//
+
+        // 클릭 입력
+        Array.from(keypad).forEach((i)=>{
+            i.addEventListener('click', (e)=>{
+                const key = e.target.dataset.key;
+                if (Number.isInteger(Number(key))) {
+                    if (ground.userInput.length < 4) {
+                        ground.userInput.push(Number(key));
+                        input.value = ground.getUserNumber();
+                        return;
+                    }
+                } else if (key === 'Enter') {
+                    try {
+                        if (ground.userInput.length < 4) {
+                            throw {type: 'length', message: 'numbers length'};
+                        }
+                        ground.isSame();
+                        ground.count += 1;
+                    } catch(e) {
+                        if (e.type === 'length') {
+                            alert(e.message)
+                            return;
+                        }
+                    }
+                    if (ground.isGameEnd()) {
+                        alert(`Congratulations!! ${ground.getGameNumber()}`)
+                        ground.startNewGame()
+                        result.innerHTML = '';
+                    } else if (ground.count > 3) {
+                        alert(`GAME OVER! ${ground.getGameNumber()}`)
+                        ground.startNewGame()
+                        result.innerHTML = '';
+                    } else {
+                        result.append(`${ground.getUserNumber()} ${ground.getMiddleResult()}`);
+                        ground.userInput = [];
+                    }
+
+                    input.value = ground.getUserNumber();
+
+                } else if (key === 'Backspace') {
+                    ground.userInput.pop(key);
+                    input.value = ground.getUserNumber();
+                } else {
+                    return;
+                }
+            })
         })
+
+        // 키보드 입력
+        window.addEventListener("keydown", (e) => {
+            const key = document.querySelector(`[data-key="${e.key}"]`);
+            key?.click();
+        })
+
     </script>
 </body>
 </html>
