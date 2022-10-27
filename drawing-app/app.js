@@ -19,6 +19,12 @@ canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 ctx.lineCap = "round";
 
+// 초기 캔버스 흰 바탕 설정
+ctx.save();
+ctx.fillStyle = "#fff";
+ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+ctx.restore();
+
 let isPainting = false;
 let isFilling = false;
 
@@ -156,10 +162,10 @@ const onColorClick = (e) => {
 const onModeClick = (e) => {
     if (isFilling) {
         isFilling = false;
-        modeBtn.innerText = "Fill";
+        modeBtn.innerText = "💧 Fill";
     } else {
         isFilling = true;
-        modeBtn.innerText = "Draw";
+        modeBtn.innerText = "🖊 Draw";
     }
 }
 
