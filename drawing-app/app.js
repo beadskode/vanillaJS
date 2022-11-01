@@ -4,6 +4,7 @@ const destroyBtn = document.getElementById("destroy-btn");
 const saveBtn = document.getElementById("save-btn");
 const fileInput = document.getElementById("file");
 const textInput = document.getElementById("text");
+const selectFont = document.getElementById("selectFont");
 const colorOptions = Array.from(
     document.getElementsByClassName("color-option")
 );
@@ -15,8 +16,23 @@ const ctx = canvas.getContext("2d"); // webGL == 3d for graphic
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 800;
 
+let font = '48px serif';
+
+const fontOne = new FontFace("tenada", "url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2210-2@1.0/Tenada.woff2')")
+const fontTwo = new FontFace("gmarket", "url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff')")
+const fontThree = new FontFace("mapo", "url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/MapoFlowerIslandA.woff')")
+
+document.fonts.add(fontOne)
+document.fonts.add(fontTwo)
+document.fonts.add(fontThree)
+
+fontOne.load();
+fontTwo.load();
+fontThree.load();
+
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
+
 ctx.lineCap = "round";
 
 // 초기 캔버스 흰 바탕 설정
@@ -170,8 +186,10 @@ const onModeClick = (e) => {
 }
 
 const onDestroyClick = (e) => {
+    ctx.save();
     ctx.fillStyle = "#FFF";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.restore();
 }
 
 const onEraseClick = (e) => {
@@ -204,14 +222,32 @@ const onDoubleClick = (e) => {
         ctx.save(); // ctx 의 현재 상태 저장
         const text = textInput.value;
         ctx.lineWidth = 1;
-        ctx.font = "48px serif"
+        ctx.font = font;
         ctx.fillText(text, e.offsetX, e.offsetY);
         ctx.restore(); // ctx의 이전 상태 복원
     }
 }
 
-const onMouseDragStart = (e) => {};
-const onMouseDragEnd = (e) => {};
+const changeFont = (e) => {
+    switch(e.target.value) {
+        case 'tenada' : {
+            font = '48px tenada';
+            break;
+        }
+        case 'gmarket' : {
+            font = '48px gmarket';
+            break;
+        }
+        case 'mapo' : {
+            font = '48px mapo';
+            break;
+        }
+        default: {
+            font = '48px serif';
+        }
+    }
+};
+
 
 // canvas.onmousemove = function () {} // 같은 이벤트 안에 여러가지 이벤트를 넣을 수 없음
 canvas.addEventListener('dblclick', onDoubleClick);
@@ -233,3 +269,4 @@ eraseBtn.addEventListener('click', onEraseClick);
 destroyBtn.addEventListener('click', onDestroyClick);
 saveBtn.addEventListener('click', onSaveClick);
 fileInput.addEventListener('change', onChange);
+selectFont.addEventListener('change', changeFont);
